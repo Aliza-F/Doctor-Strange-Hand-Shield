@@ -1,11 +1,7 @@
-let video;      // Variable to hold the webcam feed
+let video;      //Variable to hold the webcam feed
 let handPose;   // Variable for the ml5 handPose model
-let hands = []; // Array to store the tracking results
+let hands = []; //array to store the tracking results
 
-/**
- * PRELOAD: This runs before anything else.
- * We load the AI model here so it's ready when the sketch starts.
- */
 function preload() {
   // flipped: true makes the coordinates match the mirrored camera
   handPose = ml5.handPose({ flipped: true });
@@ -24,9 +20,9 @@ function setup() {
 }
 
 function draw() {
-  background(10); // Dark background to make the glow effects stand out
+  background(10); //a dark background to make the glow effects stand out
 
-  // --- 1. CALCULATE POSITIONING ---
+  // 1. CALCULATE POSITIONING:
   // We find the 'x' and 'y' needed to put the 640x480 video in the middle of the screen
   let vx = (width - 640) / 2;
   let vy = (height - 480) / 2;
@@ -34,7 +30,7 @@ function draw() {
   // Draw the camera feed at those centered coordinates
   image(video, vx, vy, 640, 480); 
 
-  // --- 2. CHECK FOR HANDS ---
+  //2. CHECK FOR HANDS:
   if (hands.length > 0) {
     for (let hand of hands) {
       // We use the middle finger knuckle as the center of the palm
@@ -48,14 +44,14 @@ function draw() {
       // Calculate distance between thumb and index finger to control the size
       let d = dist(hand.index_finger_tip.x, hand.index_finger_tip.y, hand.thumb_tip.x, hand.thumb_tip.y);
 
-      // --- 3. SIZE CALCULATION (CLAMPING) ---
-      // Map finger distance (30-160px) to a reasonable shield size (50-220px)
+      //3. SIZE CALCULATION (CLAMPING):
+      //Mapping finger distance (30-160px) to a reasonable shield size (50-220px)
       let shieldSize = map(d, 30, 160, 50, 220);
       
-      // Constrain ensures it never explodes to a huge size or gets too tiny
+      //Constrain ensures it never explodes to a huge size or gets too tiny
       shieldSize = constrain(shieldSize, 0, 250); 
 
-      // Only draw the shield if the hand is actually open (distance > 35)
+      //Only draw the shield if the hand is actually open (distance > 35)
       if (d > 35) {
         drawStrangeShield(magicX, magicY, shieldSize);
       }
@@ -76,12 +72,12 @@ function drawStrangeShield(x, y, size) {
   
   noFill();
   
-  // --- LAYER 1: THICK OUTER RING ---
+  //LAYER 1: THICK OUTER RING ---
   stroke(255, 140, 0);
   strokeWeight(6); 
   ellipse(0, 0, size * 1.5);
   
-  // --- LAYER 2: ROTATING RUNE RING ---
+  //LAYER 2: ROTATING RUNE RING ---
   push();
   rotate(frameCount * 0.02); // frameCount makes it spin over time
   strokeWeight(3);
@@ -93,7 +89,7 @@ function drawStrangeShield(x, y, size) {
   }
   pop();
 
-  // --- LAYER 3: INTERLOCKING HEXAGONS ---
+  // LAYER 3: INTERLOCKING HEXAGONS ---
   strokeWeight(4);
   stroke(255, 180, 0);
   push();
@@ -103,7 +99,7 @@ function drawStrangeShield(x, y, size) {
   drawHexagon(0, 0, size * 0.8);
   pop();
 
-  // --- LAYER 4: PULSING CENTER CORE ---
+  //LAYER 4: PULSING CENTER CORE 
   // Use a Sine wave to create a pulsing "breathing" effect
   let pulse = sin(frameCount * 0.1) * 10;
   fill(255, 200, 0, 180);
